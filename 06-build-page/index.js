@@ -17,13 +17,19 @@ async function bundleHtml(htmlTemplatePath, distHtmlPath, componentsPath) {
 }
 
 async function bundleCss(cssFilesPath, cssBundlePath) {
-  const files = await fsPromises.readdir(cssFilesPath);
-  for await (const file of files) {
-    const stat = await fsPromises.stat(path.join(cssFilesPath, file));
-    if (stat.isDirectory() || path.extname(file) !== '.css') return;
-    const fileCss = await fsPromises.readFile(path.join(cssFilesPath, file));
-    await fsPromises.appendFile(cssBundlePath, fileCss);
-  }
+  const output = fs.createWriteStream(cssBundlePath);
+
+  fs.readdir(cssFilesPath, (error, files) => {
+    if (error) console.error(error.message);
+    files.forEach(file => {
+      fs.stat(path.join(cssFilesPath, file), (error, stats) => {
+        if (error) return console.error(error.message);
+        if (stats.isDirectory() || path.extname(file) !== '.css') return;
+        const input = fs.createReadStream(path.join(cssFilesPath, file));
+        input.pipe(output);
+      });
+    });
+  });
 }
 
 async function copyFiles(filesPath, copyPath) {

@@ -5,8 +5,8 @@ const fsPromises = require('fs/promises');
 async function copyFiles(filesPath, copyPath) {
   const files = await fsPromises.readdir(filesPath);
   await fsPromises.mkdir(copyPath).catch(async () => {
-    await fsPromises.rm(copyPath, { recursive: true }).then(() => {
-      fsPromises.mkdir(copyPath);
+    await fsPromises.rm(copyPath, { recursive: true }).then(async () => {
+      await fsPromises.mkdir(copyPath);
     });
   });
   for await (const file of files) {

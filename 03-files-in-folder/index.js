@@ -10,7 +10,7 @@ fs.readdir(secretPath, {withFileTypes: true}, (err, files) => {
     fs.stat(path.join(secretPath, file.name), (error, stats) => {
       if (error) console.error(error.message);
       if (!stats.isDirectory()) {
-        console.log(file.name, path.extname(file.name), Math.round(stats.size / 1024), 'КБ');
+        console.log(file.name, path.extname(file.name), Math.ceil(stats.size / 1024), 'КБ');
       }
     });
   });
